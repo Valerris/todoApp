@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>to-do App</title>
+  <link rel="stylesheet" href="./styles/normalize.css" />
+  <link rel="stylesheet" href="./styles/styles.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+</head>
+
+<body>
+  <div class="wrapper">
+    <h1>To-do</h1>
+    <form class="form" name="todo">
+      <div class="form__field">
+        <input id="task" type="text" name="task" value="" title="Введите, используя символы латинского алфавита" />
+        <label class="label" data-label="task" for="task">Task</label>
+      </div>
+      <input type="hidden" name="editId" value="">
+      <button id="taskSubmit" class="button" type="submit" name="taskSubmit">Submit</button>
+    </form>
+    <div class="list-wrap">
+      <h3>To-do list</h3>
+      <ul class="list">
+        <!-- <li class="list__item">
+            Task 1
+            <span class="list__item--close"><i class="fa fa-close"></i></span>
+          </li>
+          <li class="list__item">
+            Task 2
+            <span class="list__item--close"><i class="fa fa-close"></i></span>
+          </li>
+          <li class="list__item">
+            Task 3
+            <span class="list__item--close"><i class="fa fa-close"></i></span>
+          </li> -->
+      </ul>
+    </div>
+  </div>
+
+  <script src="./app.js" charset="utf-8"></script>
+</body>
+
+</html>
