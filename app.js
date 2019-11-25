@@ -20,7 +20,7 @@ const State = (function() {
 			}
 		],
 		currentEditId: null,
-		currentState: ""
+		currentState: "Default"
 	};
 
 	function getTasks() {
@@ -124,7 +124,13 @@ const UICtrl = (function() {
 		el.title = "Правый клик для редактирования";
 		el.innerHTML = markup;
 
-		UISelectors.list.append(el);
+		if (State.getCurrentState() === "Edit") {
+			UISelectors.list
+				.querySelector(`[data-id="task-${item.id}"]`)
+				.replaceWith(el);
+		} else {
+			UISelectors.list.append(el);
+		}
 	};
 
 	const removeTask = function(id) {
@@ -185,7 +191,7 @@ const App = (function(UICtrl, Task, State, Validation) {
 		UISelectors.inputTask.addEventListener("focus", inputTaskFocusHandler);
 		UISelectors.inputTask.addEventListener("blur", inputTaskBlurHandler);
 
-		UISelectors.form.addEventListener("submit", formSubmitHandler);
+		UISelectors.submitBtn.addEventListener("click", formSubmitHandler);
 
 		UISelectors.list.addEventListener("click", removeListItem);
 
@@ -211,7 +217,11 @@ const App = (function(UICtrl, Task, State, Validation) {
 	function formSubmitHandler(e) {
 		e.preventDefault();
 
+		const currentState = State.getCurrentState();
+
 		let id = null,
+			type = null,
+			task = null,
 			inputValue = UICtrl.getInput();
 
 		if (Validation.validateTaskInput(inputValue)) {
@@ -228,21 +238,29 @@ const App = (function(UICtrl, Task, State, Validation) {
 				id = tasks[tasksCount - 1].id + 1;
 			}
 
-			const currentState = State.getCurrentState();
-
 			if (currentState === "Edit") {
-				id = State.getCurrentEditId;
+				id = State.getCurrentEditId();
 
-				const task = Task.createTask(id, inputValue);
-				State.addTask(task, "edit");
-			} else {
-				const task = Task.createTask(id, inputValue);
-				State.addTask(task);
+				type = "edit";
 			}
+
+			task = Task.createTask(id, inputValue);
+
+			State.addTask(task, type);
 
 			UICtrl.displayTask(task);
 		} else {
 			console.log("Wrong input value");
+		}
+
+		if (currentState === "Edit") {
+			UISelectors.submitBtn.textContent = "Submit";
+			UISelectors.submitBtn.classList.remove("button--edit");
+
+			UISelectors.list.addEventListener("click", removeListItem);
+
+			State.setCurrentState("Default");
+			State.setCurrentEditId(null);
 		}
 
 		UICtrl.clearInput();
@@ -271,7 +289,9 @@ const App = (function(UICtrl, Task, State, Validation) {
 
 		if (e.button !== 2 || e.which !== 3 || !listItem) return;
 
-		State.setCurrentEditId = listItem.dataset.id.split("-")[1];
+		State.setCurrentState("Edit");
+
+		State.setCurrentEditId(+listItem.dataset.id.split("-")[1]);
 
 		UISelectors.form.scrollIntoView();
 
